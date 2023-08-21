@@ -1,8 +1,8 @@
+import Header from "@/components/layout/Header";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "Rebook",
@@ -12,7 +12,11 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="ko">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <Header />
+        <div className="min-h-[72vh] mx-[10%]">{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 };

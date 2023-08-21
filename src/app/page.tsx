@@ -1,4 +1,4 @@
-const Home = () => {
-  return <div>123</div>;
+const MainPage = () => {
+  return <div>MainPage</div>;
 };
-export default Home;
+export default MainPage;
