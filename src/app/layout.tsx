@@ -16,7 +16,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
       <body>
         <Provider>
           <Header />
-          <div className="min-h-[72vh] mx-[10%]">{children}</div>
+          <div className="min-h-[72vh] mx-[10%] py-4">{children}</div>
           <Footer />
         </Provider>
       </body>
