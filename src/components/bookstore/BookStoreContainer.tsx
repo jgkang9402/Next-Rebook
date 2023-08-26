@@ -4,8 +4,9 @@ import GridBox from "@/components/common/GridBox";
 import MenuTab, { tabType } from "@/components/common/MenuTab";
 import useGetAladinBooks from "@/hooks/reactquery/useGetAladinBooks";
 import { AladinBookData } from "@/types/Aladin.types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Spinner from "../common/Spinner";
+import useIntersectionObserver from "@/hooks/common/useIntersectionObserver";
 
 const menuList: tabType[] = [
   {
@@ -27,10 +28,26 @@ const menuList: tabType[] = [
 ];
 
 const BookStoreContainer = () => {
+  const target = useRef<HTMLDivElement>(null);
+
   const [currentMenu, setCurrentMenu] = useState("bestseller");
-  const { data, isLoading } = useGetAladinBooks(currentMenu);
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetAladinBooks(currentMenu);
+  console.log(hasNextPage, isFetchingNextPage);
 
   const handleCurrentMenu = (menu: string) => setCurrentMenu(menu);
+
+  const handleVisibility = (isVisible: boolean) => {
+    if (isVisible && hasNextPage) fetchNextPage();
+  };
+
+  const { targetRef } = useIntersectionObserver(handleVisibility);
 
   return (
     <div className="flex flex-col space-y-4 h-full">
@@ -40,19 +57,22 @@ const BookStoreContainer = () => {
         handleCurrentMenu={handleCurrentMenu}
       />
       {isLoading ? (
-        <Spinner />
+        <Spinner spinnerBoxHeight="h-[60vh]" />
       ) : (
         <GridBox>
-          {data?.item?.map((item: AladinBookData) => (
-            <BookCard
-              key={item.title}
-              imageSrc={item.cover}
-              title={item.title}
-              description={item.description}
-            />
-          ))}
+          {data?.pages
+            .flatMap((page) => page.item)
+            .map((item: AladinBookData) => (
+              <BookCard
+                key={item.title}
+                imageSrc={item.cover}
+                title={item.title}
+                description={item.description}
+              />
+            ))}
         </GridBox>
       )}
+      <div ref={targetRef}>{isFetchingNextPage && <Spinner />}</div>
     </div>
   );
 };
