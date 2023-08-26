@@ -68,6 +68,8 @@ const BookStoreContainer = () => {
                 imageSrc={item.cover}
                 title={item.title}
                 description={item.description}
+                isbn={item.isbn}
+                isbn13={item.isbn13}
               />
             ))}
         </GridBox>
