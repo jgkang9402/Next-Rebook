@@ -38,7 +38,9 @@ const Header = () => {
                     <Link
                       href={item.path}
                       className={`block py-2 pr-4 pl-3 rounded hover:ring-2 hover:ring-gray-300 ${
-                        pathName === item.path ? "text-lemon" : "text-white"
+                        pathName.includes(item.path)
+                          ? "text-lemon"
+                          : "text-white"
                       }`}
                     >
                       {item.name}
