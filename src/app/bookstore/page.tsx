@@ -1,7 +1,4 @@
-import React from "react";
-
-const BookStorePage = () => {
-  return <div>BookStorePage</div>;
-};
+import BookStoreContainer from "@/components/bookstore/BookStoreContainer";
+const BookStorePage = async () => <BookStoreContainer />;
 
 export default BookStorePage;
