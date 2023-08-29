@@ -4,9 +4,10 @@ import GridBox from "@/components/common/GridBox";
 import MenuTab, { tabType } from "@/components/common/MenuTab";
 import useGetAladinBooks from "@/hooks/reactquery/useGetAladinBooks";
 import { AladinBookData } from "@/types/Aladin.types";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Spinner from "../common/Spinner";
 import useIntersectionObserver from "@/hooks/common/useIntersectionObserver";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const menuList: tabType[] = [
   {
@@ -28,9 +29,11 @@ const menuList: tabType[] = [
 ];
 
 const BookStoreContainer = () => {
-  const target = useRef<HTMLDivElement>(null);
-
-  const [currentMenu, setCurrentMenu] = useState("bestseller");
+  const router = useRouter();
+  const params = useSearchParams();
+  const [currentMenu, setCurrentMenu] = useState(
+    params.get("currentMenu") ? params.get("currentMenu") : "bestseller"
+  );
   const {
     data,
     isLoading,
@@ -39,21 +42,22 @@ const BookStoreContainer = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useGetAladinBooks(currentMenu);
-  console.log(hasNextPage, isFetchingNextPage);
+  const { targetRef } = useIntersectionObserver(handleVisibility);
 
-  const handleCurrentMenu = (menu: string) => setCurrentMenu(menu);
-
-  const handleVisibility = (isVisible: boolean) => {
-    if (isVisible && hasNextPage) fetchNextPage();
+  const handleCurrentMenu = (menu: string) => {
+    setCurrentMenu(menu);
+    router.replace(`?currentMenu=${menu}`);
   };
 
-  const { targetRef } = useIntersectionObserver(handleVisibility);
+  function handleVisibility(isVisible: boolean) {
+    if (isVisible && hasNextPage && !isFetchingNextPage) fetchNextPage();
+  }
 
   return (
     <div className="flex flex-col space-y-4 h-full">
       <MenuTab
         tabList={menuList}
-        currentMenu={currentMenu}
+        currentMenu={currentMenu ? currentMenu : "bestseller"}
         handleCurrentMenu={handleCurrentMenu}
       />
       {isLoading ? (
